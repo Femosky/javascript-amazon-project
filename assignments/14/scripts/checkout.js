@@ -83,15 +83,21 @@ document.querySelectorAll('.js-delete-link').forEach((link) => {
         const { productId } = link.dataset;
         removeFromCart(productId);
 
-        cart.forEach((cartItem) => {
-            const cartItemComparison = cartItem.productId;
+        for (let i = 0; i < cart.length; i++) {
+            const cartItem = cart[i];
 
-            if (cartItemComparison === productId) {
-                // cartQuantity -= cartItem.quantity;
-                console.log('clicked2');
+            if (cartItem === productId) {
+                cart.splice(i, 1);
             }
+        }
+
+        let newCartQuantity = 0;
+
+        cart.forEach((cartItem) => {
+            newCartQuantity += cartItem.quantity;
         });
-        document.querySelector('.js-return-to-home-link').innerHTML = `${cartQuantity} items`;
+
+        document.querySelector('.js-return-to-home-link').innerHTML = `${newCartQuantity} items`;
 
         const container = document.querySelector(`.js-cart-item-container-${productId}`);
         container.remove();
