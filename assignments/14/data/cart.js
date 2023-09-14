@@ -13,6 +13,24 @@ if (!cart) {
     ];
 }
 
+export let cartQuantity = parseInt(localStorage.getItem('cartQuantity')) || 0;
+
+export function calculateCartQuantity() {
+    cartQuantity = 0;
+
+    cart.forEach((cartItem) => {
+        cartQuantity += cartItem.quantity;
+    });
+
+    saveCartQuantityToStorage();
+
+    return cartQuantity;
+}
+
+function saveCartQuantityToStorage() {
+    localStorage.setItem('cartQuantity', cartQuantity);
+}
+
 function saveToStorage() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
