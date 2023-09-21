@@ -2,6 +2,8 @@ import { cart, addToCart, calculateCartQuantity } from '../data/cart.js';
 import { products } from '../data/products.js';
 import { formatCurrency } from './utils/money.js';
 
+const currentScript = 'amazon.js';
+
 let productsHTML = '';
 
 products.forEach((product) => {

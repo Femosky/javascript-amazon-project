@@ -112,6 +112,12 @@
     display: none;
 }
 
+.quantity-input-error {
+    border-radius: 4px;
+    border-color: red;
+    transition: ease-in-out;
+}
+
 .product-image {
     max-width: 100%;
     max-height: 120px;

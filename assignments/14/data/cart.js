@@ -27,6 +27,18 @@ export function calculateCartQuantity() {
     return cartQuantity;
 }
 
+export function displayCartQuantity() {
+    if (typeof currentScript !== 'undefined') {
+        if (currentScript === 'amazon.js') {
+            // document.querySelector('.js-cart-quantity').innerHTML = calculateCartQuantity() || 0;
+            console.log('its working');
+        } else if (currentScript === 'checkout.js') {
+            console.log('its working too');
+            // document.querySelector('.js-return-to-home-link').innerHTML = `${calculateCartQuantity()} items`;
+        }
+    }
+}
+
 export function updateQuantity(productId, newQuantity) {
     let matchingItem;
 

@@ -1,6 +1,8 @@
-import { cart, calculateCartQuantity, removeFromCart, updateQuantity } from '../data/cart.js';
+import { cart, calculateCartQuantity, removeFromCart, updateQuantity, displayCartQuantity } from '../data/cart.js';
 import { products } from '../data/products.js';
 import { formatCurrency } from './utils/money.js';
+
+const currentScript = 'checkout.js';
 
 let cartSummaryHTML = '';
 
@@ -26,11 +28,13 @@ cart.forEach((cartItem) => {
                 <div class="product-name">${matchingProduct.name}</div>
                 <div class="product-price">$${formatCurrency(matchingProduct.priceCents)}</div>
                 <div class="product-quantity">
-                    <span> Quantity: <span class="quantity-label">${cartItem.quantity}</span> </span>
+                    <span> Quantity: <span class="quantity-label js-quantity-label-${matchingProduct.id}">${
+        cartItem.quantity
+    }</span> </span>
                     <span class="update-quantity-link link-primary js-update-quantity-link" data-product-id="${
                         matchingProduct.id
                     }"> Update </span>
-                    <input class="quantity-input js-quantiy-input-${matchingProduct.id}">
+                    <input class="quantity-input js-quantity-input-${matchingProduct.id}">
                     <span class="save-quantity-link link-primary js-save-quantity-link" data-product-id="${
                         matchingProduct.id
                     }">Save</span>
@@ -71,7 +75,6 @@ cart.forEach((cartItem) => {
 
 document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
 
-calculateCartQuantity();
 document.querySelector('.js-return-to-home-link').innerHTML = `${calculateCartQuantity()} items`;
 
 document.querySelectorAll('.js-delete-quantity-link').forEach((link) => {
@@ -106,31 +109,43 @@ document.querySelectorAll('.js-update-quantity-link').forEach((link) => {
         const { productId } = link.dataset;
 
         const container = document.querySelector(`.js-cart-item-container-${productId}`);
-        // let previousContainerId;
 
         container.classList.add('is-editing-quantity');
-
-        // if (container.classList.contains('is-editing-quantity')) {
-        //     container.classList.remove('is-editing-quantity');
-        // } else {
-        //     container.classList.add('is-editing-quantity');
-        //     previousContainerId = false;
-        // }
     });
 });
+
+function updateInputQuantity(productId) {
+    const container = document.querySelector(`.js-cart-item-container-${productId}`);
+    const quantityInput = document.querySelector(`.js-quantity-input-${productId}`);
+    const newQuantity = Number(quantityInput.value);
+
+    if (newQuantity >= 1 && newQuantity < 1000) {
+        container.classList.remove('is-editing-quantity');
+
+        if (quantityInput.classList.contains('quantity-input-error')) {
+            quantityInput.classList.remove('quantity-input-error');
+        }
+        updateQuantity(productId, newQuantity);
+
+        document.querySelector(`.js-quantity-label-${productId}`).innerHTML = newQuantity;
+        document.querySelector('.js-return-to-home-link').innerHTML = `${calculateCartQuantity()} items`;
+    } else {
+        quantityInput.classList.add('quantity-input-error');
+    }
+}
 
 document.querySelectorAll('.js-save-quantity-link').forEach((link) => {
     link.addEventListener('click', () => {
         const { productId } = link.dataset;
 
-        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+        updateInputQuantity(productId);
+    });
 
-        container.classList.remove('is-editing-quantity');
+    document.body.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const { productId } = link.dataset;
 
-        const quantityInput = document.querySelector(`.js-quanity-input-${productId}`);
-        const newQuantity = Number(quantityInput.value);
-
-        updateQuantity(productId, newQuantity);
-        console.log(typeof newQuantity);
+            updateInputQuantity(productId);
+        }
     });
 });
